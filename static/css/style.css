@@ -119,7 +119,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 20px;
+    /* padding: 1rem 20px; */
 }
 
 .nav-brand {
@@ -133,6 +133,12 @@ p {
 
 .nav-brand i {
     font-size: 1.8rem;
+}
+
+.nav-logo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
 }
 
 .nav-menu {
@@ -695,6 +701,16 @@ p {
     align-items: center;
     gap: 10px;
     margin-bottom: 1rem;
+}
+
+.footer-logo {
+    margin-bottom: 1rem;
+}
+
+.footer-logo-img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
 }
 
 .footer-section h4 {

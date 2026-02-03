@@ -12,8 +12,9 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production-12345'
     
     # Database Configuration
+    # Using SQLite for development (change to MySQL for production)
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'mysql+pymysql://root:@localhost/railway_concession_db'
+        'sqlite:///' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'railway_concession.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False  # Set to True for SQL query debugging
     
