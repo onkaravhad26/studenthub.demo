@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Railway Concession Management System - Apply online, skip the queues, track your status">
-    <title>Railway Concession Management System</title>
+        content="StudentHub - Your one-stop platform for all student services including certificates, railway concessions, scholarships, and more">
+    <title>StudentHub - Campus Services Platform</title>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -24,8 +24,8 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="RCMS Logo" class="nav-logo">
-                <span>RCMS</span>
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudentHub Logo" class="nav-logo">
+                <span>StudentHub</span>
             </div>
             <div class="nav-menu" id="navMenu">
                 <a href="#home" class="nav-link">Home</a>
@@ -45,9 +45,10 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1 class="hero-title">Skip the Queues.<br>Apply Online.</h1>
-                    <p class="hero-subtitle">Get your railway concession in minutes, not hours. No more waiting in long
-                        lines or missing classes.</p>
+                    <h1 class="hero-title">Your Complete <span class="highlight">Campus Services</span> Platform</h1>
+                    <p class="hero-subtitle">Access all student services in one place - from certificates and
+                        concessions to scholarships and exam forms.
+                        StudentHub makes campus life easier with instant online applications and real-time tracking.</p>
 
                     <div class="hero-buttons">
                         <a href="{{ url_for('auth') }}?role=student" class="btn btn-primary">
@@ -90,11 +91,11 @@
                     </div>
                     <h3>Before</h3>
                     <ul>
-                        <li><i class="fas fa-clock"></i> Hours wasted in queues</li>
-                        <li><i class="fas fa-book-open"></i> Missed lectures & practicals</li>
-                        <li><i class="fas fa-copy"></i> Physical forms from xerox shop</li>
+                        <li><i class="fas fa-clock"></i> Hours wasted in different office queues</li>
+                        <li><i class="fas fa-book-open"></i> Missed lectures for documentation</li>
+                        <li><i class="fas fa-copy"></i> Multiple physical forms needed</li>
                         <li><i class="fas fa-question-circle"></i> No status visibility</li>
-                        <li><i class="fas fa-calendar-times"></i> Multiple visits needed</li>
+                        <li><i class="fas fa-calendar-times"></i> Multiple visits for different services</li>
                     </ul>
                 </div>
 
@@ -108,11 +109,11 @@
                     </div>
                     <h3>After</h3>
                     <ul>
-                        <li><i class="fas fa-bolt"></i> Apply in 5 minutes</li>
-                        <li><i class="fas fa-graduation-cap"></i> No class disruption</li>
+                        <li><i class="fas fa-bolt"></i> All services in one platform</li>
+                        <li><i class="fas fa-graduation-cap"></i> Apply from anywhere, anytime</li>
                         <li><i class="fas fa-laptop"></i> 100% digital process</li>
-                        <li><i class="fas fa-chart-line"></i> Real-time tracking</li>
-                        <li><i class="fas fa-check-double"></i> Single visit to collect</li>
+                        <li><i class="fas fa-chart-line"></i> Real-time status tracking</li>
+                        <li><i class="fas fa-check-double"></i> Single platform for everything</li>
                     </ul>
                 </div>
             </div>
@@ -123,7 +124,7 @@
     <section class="how-it-works" id="how-it-works">
         <div class="container">
             <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Get your railway concession in 3 simple steps</p>
+            <p class="section-subtitle">Get any service in just 3 simple steps</p>
 
             <div class="steps">
                 <div class="step">
@@ -132,8 +133,7 @@
                         <i class="fas fa-user-plus"></i>
                     </div>
                     <h3>Register & Login</h3>
-                    <p>Create your account using your college roll number and email. Login securely to access the
-                        portal.</p>
+                    <p>Create your account using your college credentials and verify your email address.</p>
                 </div>
 
                 <div class="step-connector"></div>
@@ -143,8 +143,8 @@
                     <div class="step-icon">
                         <i class="fas fa-file-upload"></i>
                     </div>
-                    <h3>Fill Form & Upload</h3>
-                    <p>Complete the online application form and upload required documents. Get instant token number.</p>
+                    <h3>Choose & Apply</h3>
+                    <p>Select any service, fill the form, and upload required documents. Get instant token number.</p>
                 </div>
 
                 <div class="step-connector"></div>
@@ -155,65 +155,81 @@
                         <i class="fas fa-bell"></i>
                     </div>
                     <h3>Track & Collect</h3>
-                    <p>Monitor your request status in real-time. Collect your concession when status shows "Ready".</p>
+                    <p>Monitor your request status in real-time. Get notified when your service is ready.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Services Section -->
     <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">Key Features</h2>
-            <p class="section-subtitle">Everything you need for hassle-free concession management</p>
+            <h2 class="section-title">Available Services</h2>
+            <p class="section-subtitle">Everything you need for your campus life in one platform</p>
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-ticket-alt"></i>
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-certificate"></i>
                     </div>
-                    <h3>Unique Token Numbers</h3>
-                    <p>Every request gets a unique token (RC-YYYY-XXXX) for easy tracking and reference.</p>
+                    <h3>Bonafide Certificate</h3>
+                    <p>Get certificates for bank, visa, or official purposes. Fast processing and digital delivery.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-exchange-alt"></i>
                     </div>
-                    <h3>Real-Time Status</h3>
-                    <p>Track your application through all stages: Submitted → In Progress → Ready → Collected.</p>
+                    <h3>Transfer Certificate</h3>
+                    <p>Request leaving certificates online with simple documentation and quick approval process.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-train"></i>
                     </div>
-                    <h3>Mobile Responsive</h3>
-                    <p>Works perfectly on desktop, tablet, and mobile devices. Apply from anywhere!</p>
+                    <h3>Railway Concession</h3>
+                    <p>Apply for monthly or quarterly railway passes. Track status and collect hassle-free.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-clock"></i>
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <h3>24/7 Access</h3>
-                    <p>Apply anytime, track status anytime. No need to match office hours.</p>
+                    <h3>Scholarships</h3>
+                    <p>Apply for government and institutional scholarships with comprehensive form support.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-edit"></i>
                     </div>
-                    <h3>Digital Documents</h3>
-                    <p>Upload ID proof, photos, and receipts digitally. No physical copies needed.</p>
+                    <h3>Exam Forms</h3>
+                    <p>Submit examination registration forms digitally. No more paper forms or long queues.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-tachometer-alt"></i>
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <i class="fas fa-file-invoice-dollar"></i>
                     </div>
-                    <h3>Fast Processing</h3>
-                    <p>Organized workflow helps workers process requests faster and more efficiently.</p>
+                    <h3>Fee Receipts</h3>
+                    <p>Download and view all your fee payment receipts anytime, anywhere with one click.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Library Card</h3>
+                    <p>Apply for new library cards or renew existing ones. Instant digital verification.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h3>Digital ID Card</h3>
+                    <p>Request and download your official digital student ID card with photo verification.</p>
                 </div>
             </div>
         </div>
@@ -228,9 +244,8 @@
                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="RCMS Logo"
                             class="footer-logo-img">
                     </div>
-                    <h3>Railway Concession System</h3>
-                    <p>Streamlining railway concession applications for students. Say goodbye to long queues and hello
-                        to efficiency.</p>
+                    <h3>StudentHub</h3>
+                    <p>Your complete campus services platform. Making student life easier, one service at a time.</p>
                 </div>
 
                 <div class="footer-section">
@@ -266,7 +281,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2026 Railway Concession Management System. All rights reserved.</p>
+                <p>&copy; 2026 StudentHub. All rights reserved.</p>
                 <p>Developed with <i class="fas fa-heart"></i> for students</p>
             </div>
         </div>

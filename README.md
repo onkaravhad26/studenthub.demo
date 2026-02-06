@@ -1,20 +1,44 @@
-# Railway Concession Management System
+# StudentHub - Campus Services Platform
 
-A web-based system to streamline the railway concession application process for college students, eliminating long queues and manual paperwork.
+A comprehensive web-based platform for managing all student services including certificates, railway concessions, scholarships, exam forms, and more.
 
-## 🎯 Project Overview
+## Features
 
-This system allows:
-- **Students** to apply for railway concessions online, upload documents, and track request status
-- **Workers** to manage requests efficiently, update status, and maintain digital records
-- **College** to provide better service and reduce administrative overhead
+- 🎓 **Multi-Service Platform**: Access 8+ campus services in one place
+- 🔐 **Secure Authentication**: Separate login for students and workers
+- 📱 **Responsive Design**: Works on all devices
+- 🎫 **Token System**: Unique tracking number for each request
+- 📋 **Service Management**: Track all applications in one dashboard
+- ⚡ **Fast Processing**: Streamlined workflow for quick service delivery
 
-## 🛠️ Technology Stack
+## Available Services
 
+1. **Bonafide Certificate** - For bank, visa, or official purposes
+2. **Transfer Certificate** - Leaving certificates
+3. **Railway Concession** - Monthly/Quarterly passes
+4. **Scholarships** - Government and institutional applications
+5. **Exam Forms** - Examination registrations
+6. **Fee Receipts** - Download payment receipts
+7. **Library Card** - New/Renewal applications
+8. **Digital ID Card** - Student ID cards
+
+## Tech Stack
+
+- **Backend**: Python Flask
+- **Database**: SQLite with SQLAlchemy ORM
 - **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Python + Flask
-- **Database**: MySQL
-- **Authentication**: Flask-Login + Bcrypt
+- **Authentication**: Flask-Login
+- **Styling**: Custom CSS with modern design
+
+## Student Features
+
+- Create account and login
+- Apply for any of the 8 services online
+- Upload required documents
+- Track request status with token number
+- View request history
+- Download fee receipts
+- Access academic calendar and faculty information
 
 ## 📋 Prerequisites
 

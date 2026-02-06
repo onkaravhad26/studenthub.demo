@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Receipts - StudentHub</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body class="dashboard-page">
+    {% include 'partials/sidebar.html' %}
+
+    <main class="main-content">
+        {% include 'partials/topbar.html' %}
+
+        <div class="dashboard-content">
+            <section class="page-header-section">
+                <h2><i class="fas fa-file-invoice-dollar"></i> Fee Receipts</h2>
+                <p>Download your fee payment receipts</p>
+            </section>
+
+            <section class="requests-section">
+                <div class="receipts-grid">
+                    <!-- Semester Fee Receipt -->
+                    <div class="receipt-card">
+                        <div class="receipt-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="receipt-info">
+                            <h3>Semester I - 2024-25</h3>
+                            <p class="receipt-amount">₹ 45,000</p>
+                            <p class="receipt-date">Paid on: 15 Aug 2024</p>
+                            <p class="receipt-status paid">Paid</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="downloadReceipt('sem1')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+
+                    <!-- Semester Fee Receipt -->
+                    <div class="receipt-card">
+                        <div class="receipt-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="receipt-info">
+                            <h3>Semester II - 2024-25</h3>
+                            <p class="receipt-amount">₹ 45,000</p>
+                            <p class="receipt-date">Paid on: 10 Jan 2025</p>
+                            <p class="receipt-status paid">Paid</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="downloadReceipt('sem2')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+
+                    <!-- Exam Fee Receipt -->
+                    <div class="receipt-card">
+                        <div class="receipt-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="receipt-info">
+                            <h3>Exam Fee - Dec 2024</h3>
+                            <p class="receipt-amount">₹ 2,500</p>
+                            <p class="receipt-date">Paid on: 20 Nov 2024</p>
+                            <p class="receipt-status paid">Paid</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="downloadReceipt('exam1')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+
+                    <!-- Library Fee Receipt -->
+                    <div class="receipt-card">
+                        <div class="receipt-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="receipt-info">
+                            <h3>Library Fee - 2024-25</h3>
+                            <p class="receipt-amount">₹ 1,000</p>
+                            <p class="receipt-date">Paid on: 15 Aug 2024</p>
+                            <p class="receipt-status paid">Paid</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="downloadReceipt('library')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        function downloadReceipt(receiptId) {
+            alert('Downloading receipt for: ' + receiptId + '\n\n(In production, this would download a PDF receipt)');
+        }
+    </script>
+</body>
+
+</html>

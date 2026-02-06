@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Details - StudentHub</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body class="dashboard-page">
+    {% include 'partials/sidebar.html' %}
+
+    <main class="main-content">
+        {% include 'partials/topbar.html' %}
+
+        <div class="dashboard-content">
+            <section class="page-header-section">
+                <h2><i class="fas fa-users"></i> Faculty Information</h2>
+                <p>Contact details and office hours of faculty members</p>
+            </section>
+
+            <section class="faculty-section">
+                <h3 class="section-title">Administration</h3>
+                <div class="faculty-grid">
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Dr. Principal Name</h4>
+                            <p class="faculty-role">Principal</p>
+                            <p class="faculty-contact"><i class="fas fa-envelope"></i> principal@college.edu</p>
+                            <p class="faculty-contact"><i class="fas fa-phone"></i> +91 1234567890</p>
+                        </div>
+                    </div>
+
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Prof. Vice Principal Name</h4>
+                            <p class="faculty-role">Vice Principal</p>
+                            <p class="faculty-contact"><i class="fas fa-envelope"></i> vp@college.edu</p>
+                            <p class="faculty-contact"><i class="fas fa-phone"></i> +91 1234567891</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Department Faculty - {{ current_user.department }}</h3>
+                <div class="faculty-grid">
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Prof. HOD Name</h4>
+                            <p class="faculty-role">Head of Department - {{ current_user.department }}</p>
+                            <p class="faculty-contact"><i class="fas fa-envelope"></i> hod@college.edu</p>
+                            <p class="faculty-contact"><i class="fas fa-clock"></i> Office Hours: Mon-Fri, 10 AM - 4 PM
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Class Coordinator</h4>
+                            <p class="faculty-role">{{ current_user.year }} - {{ current_user.division }}</p>
+                            <p class="faculty-contact"><i class="fas fa-envelope"></i> coordinator@college.edu</p>
+                            <p class="faculty-contact"><i class="fas fa-clock"></i> Office Hours: Mon-Fri, 11 AM - 3 PM
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Prof. Faculty Name 1</h4>
+                            <p class="faculty-role">Assistant Professor - {{ current_user.department }}</p>
+                            <p class="faculty-contact"><i class="fas fa-envelope"></i> faculty1@college.edu</p>
+                            <p class="faculty-contact"><i class="fas fa-clock"></i> Office Hours: Mon, Wed, Fri - 2 PM -
+                                4 PM</p>
+                        </div>
+                    </div>
+
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Prof. Faculty Name 2</h4>
+                            <p class="faculty-role">Associate Professor - {{ current_user.department }}</p>
+                            <p class="faculty-contact"><i class="fas fa-envelope"></i> faculty2@college.edu</p>
+                            <p class="faculty-contact"><i class="fas fa-clock"></i> Office Hours: Tue, Thu - 1 PM - 4 PM
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+
+</html>

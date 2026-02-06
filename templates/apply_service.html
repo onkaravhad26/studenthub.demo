@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for {{ service_name }} - StudentHub</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+</head>
+
+<body class="dashboard-page">
+    {% include 'partials/sidebar.html' %}
+
+    <main class="main-content">
+        {% include 'partials/topbar.html' %}
+
+        <div class="dashboard-content">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                    <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <section class="page-header-section">
+                <h2><i class="{{ service_icon }}"></i> Apply for {{ service_name }}</h2>
+                <p>{{ service_description }}</p>
+            </section>
+
+            <section class="form-section">
+                <div class="form-container">
+                    <form method="POST" action="{{ url_for('submit_application', service_type=service_type) }}"
+                        enctype="multipart/form-data" id="applicationForm">
+
+                        <!-- Railway Concession Specific Fields -->
+                        {% if service_type == 'railway' %}
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="from_station">From Station <span class="required">*</span></label>
+                                <input type="text" id="from_station" name="from_station"
+                                    placeholder="e.g., Mumbai Central" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="to_station">To Station <span class="required">*</span></label>
+                                <input type="text" id="to_station" name="to_station" placeholder="e.g., Pune Junction"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="journey_class">Class <span class="required">*</span></label>
+                                <select id="journey_class" name="journey_class" required>
+                                    <option value="">Select Class</option>
+                                    <option value="First">First Class</option>
+                                    <option value="Second">Second Class</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="duration">Duration <span class="required">*</span></label>
+                                <select id="duration" name="duration" required>
+                                    <option value="">Select Duration</option>
+                                    <option value="Monthly">Monthly</option>
+                                    <option value="Quarterly">Quarterly (3 Months)</option>
+                                </select>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Bonafide Certificate Specific Fields -->
+                        {% if service_type == 'bonafide' %}
+                        <div class="form-group">
+                            <label for="purpose">Purpose <span class="required">*</span></label>
+                            <select id="purpose" name="purpose" required>
+                                <option value="">Select Purpose</option>
+                                <option value="Bank Loan">Bank Loan</option>
+                                <option value="Passport/Visa">Passport/Visa Application</option>
+                                <option value="Scholarship">Scholarship Application</option>
+                                <option value="Exam Application">Competitive Exam</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <!-- Transfer/Leaving Certificate Specific Fields -->
+                        {% if service_type == 'transfer' %}
+                        <div class="form-group">
+                            <label for="reason">Reason for Leaving <span class="required">*</span></label>
+                            <textarea id="reason" name="purpose" rows="3"
+                                placeholder="Mention your reason for requesting transfer certificate"
+                                required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_date">Last Date of Attendance <span class="required">*</span></label>
+                            <input type="date" id="last_date" name="last_attendance_date" required>
+                        </div>
+                        {% endif %}
+
+                        <!-- Scholarship Specific Fields -->
+                        {% if service_type == 'scholarship' %}
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="scholarship_type">Scholarship Type <span class="required">*</span></label>
+                                <select id="scholarship_type" name="purpose" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Government Scholarship">Government Scholarship</option>
+                                    <option value="Merit Based">Merit Based</option>
+                                    <option value="Minority Scholarship">Minority Scholarship</option>
+                                    <option value="EBC/OBC">EBC/OBC Scholarship</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="annual_income">Annual Family Income <span class="required">*</span></label>
+                                <input type="number" id="annual_income" name="annual_income" placeholder="In Rupees"
+                                    required>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Exam Form Specific Fields -->
+                        {% if service_type == 'exam' %}
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="exam_type">Exam Type <span class="required">*</span></label>
+                                <select id="exam_type" name="purpose" required>
+                                    <option value="">Select Exam</option>
+                                    <option value="Semester End Exam">Semester End Exam</option>
+                                    <option value="Supplementary Exam">Supplementary Exam</option>
+                                    <option value="Revaluation">Revaluation</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="semester">Semester <span class="required">*</span></label>
+                                <select id="semester" name="semester" required>
+                                    <option value="">Select Semester</option>
+                                    <option value="Semester 1">Semester 1</option>
+                                    <option value="Semester 2">Semester 2</option>
+                                    <option value="Semester 3">Semester 3</option>
+                                    <option value="Semester 4">Semester 4</option>
+                                    <option value="Semester 5">Semester 5</option>
+                                    <option value="Semester 6">Semester 6</option>
+                                    <option value="Semester 7">Semester 7</option>
+                                    <option value="Semester 8">Semester 8</option>
+                                </select>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Library Card Specific Fields -->
+                        {% if service_type == 'library' %}
+                        <div class="form-group">
+                            <label for="card_type">Request Type <span class="required">*</span></label>
+                            <select id="card_type" name="purpose" required>
+                                <option value="">Select Type</option>
+                                <option value="New Library Card">New Library Card</option>
+                                <option value="Renewal">Renewal</option>
+                                <option value="Lost Card Replacement">Lost Card Replacement</option>
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <!-- Digital ID Card Specific Fields -->
+                        {% if service_type == 'id_card' %}
+                        <div class="form-group">
+                            <label for="id_type">Request Type <span class="required">*</span></label>
+                            <select id="id_type" name="purpose" required>
+                                <option value="">Select Type</option>
+                                <option value="New ID Card">New ID Card</option>
+                                <option value="Duplicate ID Card">Duplicate ID Card (Lost)</option>
+                                <option value="ID Card Renewal">ID Card Renewal</option>
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <!-- Common Address Field (for most services) -->
+                        {% if service_type in ['railway', 'bonafide', 'id_card'] %}
+                        <div class="form-group">
+                            <label for="address">Current Address <span class="required">*</span></label>
+                            <textarea id="address" name="address" rows="3"
+                                placeholder="Enter your current residential address" required></textarea>
+                        </div>
+                        {% endif %}
+
+                        <!-- File Upload Section -->
+                        <div class="file-upload-section">
+                            <h3><i class="fas fa-paperclip"></i> Required Documents</h3>
+
+                            <div class="form-row">
+                                <div class="form-group file-upload-group">
+                                    <label for="id_proof">ID Proof (Aadhaar/PAN) <span class="required">*</span></label>
+                                    <div class="file-input-wrapper">
+                                        <input type="file" id="id_proof" name="id_proof" accept=".pdf,.jpg,.jpeg,.png"
+                                            required>
+                                        <label for="id_proof" class="file-input-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Choose File</span>
+                                        </label>
+                                        <span class="file-name">No file chosen</span>
+                                    </div>
+                                    <small>PDF, JPG, PNG (Max 2MB)</small>
+                                </div>
+
+                                <div class="form-group file-upload-group">
+                                    <label for="photo">Passport Size Photo <span class="required">*</span></label>
+                                    <div class="file-input-wrapper">
+                                        <input type="file" id="photo" name="photo" accept=".jpg,.jpeg,.png" required>
+                                        <label for="photo" class="file-input-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Choose File</span>
+                                        </label>
+                                        <span class="file-name">No file chosen</span>
+                                    </div>
+                                    <small>JPG, PNG (Max 1MB)</small>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group file-upload-group">
+                                    <label for="fee_receipt">Fee Receipt <span class="required">*</span></label>
+                                    <div class="file-input-wrapper">
+                                        <input type="file" id="fee_receipt" name="fee_receipt"
+                                            accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <label for="fee_receipt" class="file-input-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Choose File</span>
+                                        </label>
+                                        <span class="file-name">No file chosen</span>
+                                    </div>
+                                    <small>PDF, JPG, PNG (Max 2MB)</small>
+                                </div>
+
+                                <div class="form-group file-upload-group">
+                                    <label for="additional_doc">Additional Document <span
+                                            class="optional">(Optional)</span></label>
+                                    <div class="file-input-wrapper">
+                                        <input type="file" id="additional_doc" name="additional_doc"
+                                            accept=".pdf,.jpg,.jpeg,.png">
+                                        <label for="additional_doc" class="file-input-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Choose File</span>
+                                        </label>
+                                        <span class="file-name">No file chosen</span>
+                                    </div>
+                                    <small>PDF, JPG, PNG (Max 2MB)</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Remarks -->
+                        <div class="form-group">
+                            <label for="remarks">Additional Remarks <span class="optional">(Optional)</span></label>
+                            <textarea id="remarks" name="remarks" rows="3"
+                                placeholder="Any additional information you'd like to provide"></textarea>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a href="{{ url_for('student_dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+</body>
+
+</html>

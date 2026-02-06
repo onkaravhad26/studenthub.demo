@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - StudentHub</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body class="dashboard-page">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudentHub Logo" class="sidebar-logo">
+            <h3>StudentHub</h3>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('student_dashboard') }}" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('my_requests') }}" class="nav-item">
+                <i class="fas fa-list"></i>
+                <span>My Requests</span>
+            </a>
+            <a href="{{ url_for('student_profile') }}" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="{{ url_for('logout') }}" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1>Student Dashboard</h1>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span class="user-name">{{ current_user.full_name }}</span>
+                    <span class="user-role">{{ current_user.roll_number }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-card">
+                    <div class="welcome-text">
+                        <h2>Welcome back, {{ current_user.full_name.split()[0] }}! 👋</h2>
+                        <p>Access all student services in one place</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section class="services-section">
+                <div class="section-header">
+                    <h2>Available Services</h2>
+                    <p>Choose a service to get started</p>
+                </div>
+
+                <div class="services-grid">
+                    <!-- Bonafide Certificate -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <h3>Bonafide Certificate</h3>
+                        <p>Get certificate for bank, visa, or other purposes</p>
+                        <a href="{{ url_for('apply_service', service_type='bonafide') }}"
+                            class="btn btn-primary btn-sm btn-full">
+                            Apply Now
+                        </a>
+                    </div>
+
+                    <!-- Transfer Certificate -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h3>Leaving Certificate</h3>
+                        <p>Request transfer or leaving certificate</p>
+                        <a href="{{ url_for('apply_service', service_type='transfer') }}"
+                            class="btn btn-primary btn-sm btn-full">
+                            Apply Now
+                        </a>
+                    </div>
+
+                    <!-- Railway Concession -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i class="fas fa-train"></i>
+                        </div>
+                        <h3>Railway Concession</h3>
+                        <p>Apply for monthly or quarterly railway pass</p>
+                        <a href="{{ url_for('apply_service', service_type='railway') }}"
+                            class="btn btn-primary btn-sm btn-full">
+                            Apply Now
+                        </a>
+                    </div>
+
+                    <!-- Scholarship Forms -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>Scholarship Forms</h3>
+                        <p>Apply for government or institutional scholarships</p>
+                        <a href="{{ url_for('apply_service', service_type='scholarship') }}"
+                            class="btn btn-primary btn-sm btn-full">
+                            Apply Now
+                        </a>
+                    </div>
+
+                    <!-- Exam Forms -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <h3>Exam Forms</h3>
+                        <p>Submit exam registration forms</p>
+                        <a href="{{ url_for('apply_service', service_type='exam') }}"
+                            class="btn btn-primary btn-sm btn-full">
+                            Apply Now
+                        </a>
+                    </div>
+
+                    <!-- Fee Receipt -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(20, 184, 166, 0.1); color: #14b8a6;">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3>Fee Receipt</h3>
+                        <p>Download fee payment receipts</p>
+                        <a href="{{ url_for('fee_receipts') }}" class="btn btn-primary btn-sm btn-full">
+                            View Receipts
+                        </a>
+                    </div>
+
+                    <!-- Library Card -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>Library Card</h3>
+                        <p>Apply for or renew library card</p>
+                        <a href="{{ url_for('apply_service', service_type='library') }}"
+                            class="btn btn-primary btn-sm btn-full">
+                            Apply Now
+                        </a>
+                    </div>
+
+                    <!-- Digital ID Card -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <h3>Digital ID Card</h3>
+                        <p>Request or download digital student ID</p>
+                        <a href="{{ url_for('apply_service', service_type='id_card') }}"
+                            class="btn btn-primary btn-sm btn-full">
+                            Get ID Card
+                        </a>
+                    </div>
+
+                    <!-- Academic Calendar -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <h3>Academic Calendar</h3>
+                        <p>View exam dates, holidays, and events</p>
+                        <a href="{{ url_for('academic_calendar') }}" class="btn btn-primary btn-sm btn-full">
+                            View Calendar
+                        </a>
+                    </div>
+
+                    <!-- Faculty Details -->
+                    <div class="service-card">
+                        <div class="service-icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h3>Faculty Details</h3>
+                        <p>Contact information and office hours</p>
+                        <a href="{{ url_for('faculty_details') }}" class="btn btn-primary btn-sm btn-full">
+                            View Faculty
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+
+</html>

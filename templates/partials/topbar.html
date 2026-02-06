@@ -1,0 +1,12 @@
+<header class="topbar">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <h1>{{ page_title or 'Student Dashboard' }}</h1>
+    <div class="topbar-right">
+        <div class="user-info">
+            <span class="user-name">{{ current_user.full_name }}</span>
+            <span class="user-role">{{ current_user.roll_number }}</span>
+        </div>
+    </div>
+</header>

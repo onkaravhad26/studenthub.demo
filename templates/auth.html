@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - RCMS</title>
+    <meta name="description" content="Login or Sign up for StudentHub - Access all campus services">
+    <title>Login / Sign Up - StudentHub</title>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -37,10 +38,11 @@
         <div class="auth-container">
             <!-- Role Selection (shown by default) -->
             <div class="role-selection" id="roleSelection">
-                <div class="auth-header">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="RCMS Logo" class="auth-logo">
-                    <h2>Welcome to RCMS</h2>
-                    <p>Select your role to continue</p>
+                <div class="auth-branding">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudentHub Logo"
+                        class="auth-logo">
+                    <h1>StudentHub</h1>
+                    <p>Your Campus Services Platform</p>
                 </div>
 
                 <div class="role-cards">
