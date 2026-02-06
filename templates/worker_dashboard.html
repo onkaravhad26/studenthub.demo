@@ -309,7 +309,8 @@
         style="background: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 2rem;">
             <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">
-                <i class="fas fa-graduation-cap"></i> StudentHub Worker
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudentHub"
+                    style="height: 30px; width: auto; vertical-align: middle; margin-right: 8px;"> StudentHub Worker
             </h2>
             <a href="{{ url_for('worker_dashboard') }}"
                 style="color: #1f2937; text-decoration: none; font-weight: 600;">
