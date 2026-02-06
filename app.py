@@ -22,6 +22,27 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
 
+# Initialize database and create tables (for production deployment)
+with app.app_context():
+    from models import init_models
+    Student, Worker, ServiceRequest = init_models(db)
+    db.create_all()
+    
+    # Create default worker if not exists
+    if not Worker.query.filter_by(employee_id='ADMIN001').first():
+        admin_worker = Worker(
+            employee_id='ADMIN001',
+            email='admin@college.edu',
+            full_name='System Administrator',
+            department='Administration',
+            role='admin',
+            is_active=True
+        )
+        admin_worker.set_password('admin123')
+        db.session.add(admin_worker)
+        db.session.commit()
+
+
 # User loader for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
