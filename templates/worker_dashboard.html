@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard - StudentHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .worker-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .welcome-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .welcome-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-header p {
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-card.pending {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .stat-card.ready {
+            border-left: 4px solid #10b981;
+        }
+
+        .stat-card.collected {
+            border-left: 4px solid #6b7280;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card.total .stat-icon {
+            background: #667eea;
+        }
+
+        .stat-card.pending .stat-icon {
+            background: #f59e0b;
+        }
+
+        .stat-card.ready .stat-icon {
+            background: #10b981;
+        }
+
+        .stat-card.collected .stat-icon {
+            background: #6b7280;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .view-all-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        .request-item {
+            padding: 1rem;
+            border-left: 3px solid #e5e7eb;
+            margin-bottom: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .request-item:hover {
+            border-left-color: #667eea;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .request-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .request-token {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-submitted {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-ready {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-collected {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .request-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .request-info i {
+            color: #667eea;
+        }
+
+        .service-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+
+        .service-count {
+            background: #667eea;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-breakdown {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Simple Worker Navigation -->
+    <nav
+        style="background: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">
+                <i class="fas fa-graduation-cap"></i> StudentHub Worker
+            </h2>
+            <a href="{{ url_for('worker_dashboard') }}"
+                style="color: #1f2937; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ url_for('worker_requests') }}" style="color: #1f2937; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-list"></i> All Requests
+            </a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="{{ url_for('worker_profile') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="{{ url_for('logout') }}" style="color: #ef4444; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="worker-container">
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <h1><i class="fas fa-user-tie"></i> {{ current_user.full_name }} - {{ current_user.employee_id }}</h1>
+            <p>Here's an overview of all service requests in the system.</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ total_requests }}</div>
+                        <div class="stat-label">Total Requests</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card pending">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ pending_requests }}</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card ready">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ ready_requests }}</div>
+                        <div class="stat-label">Ready</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card collected">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ collected_requests }}</div>
+                        <div class="stat-label">Collected</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Recent Requests -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-history"></i> Recent Requests
+                    </h2>
+                    <a href="{{ url_for('worker_requests') }}" class="view-all-link">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                {% if recent_requests %}
+                {% for req in recent_requests %}
+                <div class="request-item">
+                    <div class="request-header-row">
+                        <span class="request-token">{{ req.token_number }}</span>
+                        <span class="status-badge status-{{ req.status.lower().replace(' ', '-') }}">
+                            {{ req.status }}
+                        </span>
+                    </div>
+                    <div class="request-info">
+                        <span><i class="fas fa-calendar"></i> {{ req.submitted_at|date }}</span>
+                        <span><i class="fas fa-tag"></i> {{ req.request_type }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p style="text-align: center; color: #6b7280; padding: 2rem;">No requests yet</p>
+                {% endif %}
+            </div>
+
+            <!-- Service Breakdown -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-chart-pie"></i> Service Breakdown
+                    </h2>
+                </div>
+
+                <div class="service-breakdown">
+                    {% if service_counts %}
+                    {% for service, count in service_counts.items() %}
+                    <div class="service-item">
+                        <span class="service-name">{{ service|title }}</span>
+                        <span class="service-count">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p style="grid-column: 1/-1; text-align: center; color: #6b7280;">No data available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{{ url_for('worker_requests') }}" class="btn btn-primary">
+                <i class="fas fa-list"></i>
+                View All Requests
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -515,29 +515,313 @@ def request_details(request_id):
 @app.route('/student/profile')
 @login_required
 def student_profile():
-    """Student profile page - To be implemented later"""
+    """Student profile page"""
     if session.get('user_type') != 'student':
         flash('Access denied!', 'error')
         return redirect(url_for('index'))
-    return f"""
-    <h1>Student Profile</h1>
-    <p>Name: {current_user.full_name}</p>
-    <p>Roll Number: {current_user.roll_number}</p>
-    <p>Email: {current_user.email}</p>
-    <p>Department: {current_user.department}</p>
-    <p>Year: {current_user.year}</p>
-    <p>Division: {current_user.division}</p>
-    <a href='/student/dashboard'>Back to Dashboard</a>
-    """
+    return render_template('student_profile.html')
+
+@app.route('/student/profile/update', methods=['POST'])
+@login_required
+def update_profile():
+    """Update student profile"""
+    if session.get('user_type') != 'student':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        # Get form data
+        full_name = request.form.get('full_name')
+        phone_number = request.form.get('phone_number')
+        
+        # Update profile
+        current_user.full_name = full_name
+        current_user.phone_number = phone_number
+        
+        db.session.commit()
+        
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('student_profile'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating profile: {str(e)}', 'error')
+        return redirect(url_for('student_profile'))
+
+@app.route('/student/change-password', methods=['POST'])
+@login_required
+def change_password():
+    """Change student password"""
+    if session.get('user_type') != 'student':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Verify old password
+        if not current_user.check_password(old_password):
+            flash('Current password is incorrect!', 'error')
+            return redirect(url_for('student_profile'))
+        
+        # Validate new password
+        if new_password != confirm_password:
+            flash('New passwords do not match!', 'error')
+            return redirect(url_for('student_profile'))
+        
+        if len(new_password) < 6:
+            flash('Password must be at least 6 characters long!', 'error')
+            return redirect(url_for('student_profile'))
+        
+        # Update password
+        current_user.set_password(new_password)
+        db.session.commit()
+        
+        flash('Password changed successfully!', 'success')
+        return redirect(url_for('student_profile'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error changing password: {str(e)}', 'error')
+        return redirect(url_for('student_profile'))
+
+# Worker Profile Routes
+@app.route('/worker/profile')
+@login_required
+def worker_profile():
+    """Worker profile page"""
+    if session.get('user_type') != 'worker':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    return render_template('worker_profile.html')
+
+@app.route('/worker/profile/update', methods=['POST'])
+@login_required
+def update_worker_profile():
+    """Update worker profile"""
+    if session.get('user_type') != 'worker':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        # Get form data
+        full_name = request.form.get('full_name')
+        
+        # Update profile
+        current_user.full_name = full_name
+        
+        db.session.commit()
+        
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('worker_profile'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating profile: {str(e)}', 'error')
+        return redirect(url_for('worker_profile'))
+
+@app.route('/worker/change-password', methods=['POST'])
+@login_required
+def worker_change_password():
+    """Change worker password"""
+    if session.get('user_type') != 'worker':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Verify old password
+        if not current_user.check_password(old_password):
+            flash('Current password is incorrect!', 'error')
+            return redirect(url_for('worker_profile'))
+        
+        # Validate new password
+        if new_password != confirm_password:
+            flash('New passwords do not match!', 'error')
+            return redirect(url_for('worker_profile'))
+        
+        if len(new_password) < 6:
+            flash('Password must be at least 6 characters long!', 'error')
+            return redirect(url_for('worker_profile'))
+        
+        # Update password
+        current_user.set_password(new_password)
+        db.session.commit()
+        
+        flash('Password changed successfully!', 'success')
+        return redirect(url_for('worker_profile'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error changing password: {str(e)}', 'error')
+        return redirect(url_for('worker_profile'))
+
 
 @app.route('/worker/dashboard')
 @login_required
 def worker_dashboard():
-    """Worker dashboard - To be implemented in Phase 7"""
+    """Worker dashboard with statistics and recent requests"""
     if session.get('user_type') != 'worker':
         flash('Access denied!', 'error')
         return redirect(url_for('index'))
-    return f"<h1>Welcome to Worker Dashboard, {current_user.full_name}!</h1><a href='/logout'>Logout</a>"
+    
+    from models import init_models
+    _, _, ServiceRequest = init_models(db)
+    
+    # Calculate statistics
+    all_requests = ServiceRequest.query.all()
+    total_requests = len(all_requests)
+    pending_requests = len([r for r in all_requests if r.status in ['Submitted', 'In Progress']])
+    ready_requests = len([r for r in all_requests if r.status == 'Ready'])
+    collected_requests = len([r for r in all_requests if r.status == 'Collected'])
+    
+    # Service-wise breakdown
+    service_counts = {}
+    for req in all_requests:
+        service_counts[req.request_type] = service_counts.get(req.request_type, 0) + 1
+    
+    # Recent requests (last 10)
+    recent_requests = ServiceRequest.query.order_by(
+        ServiceRequest.submitted_at.desc()
+    ).limit(10).all()
+    
+    return render_template('worker_dashboard.html',
+                         total_requests=total_requests,
+                         pending_requests=pending_requests,
+                         ready_requests=ready_requests,
+                         collected_requests=collected_requests,
+                         service_counts=service_counts,
+                         recent_requests=recent_requests)
+
+@app.route('/worker/requests')
+@login_required
+def worker_requests():
+    """View all service requests with search and filter"""
+    if session.get('user_type') != 'worker':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    
+    from models import init_models
+    _, _, ServiceRequest = init_models(db)
+    
+    # Get filter parameters
+    search_query = request.args.get('search', '').strip()
+    service_filter = request.args.get('service', '')
+    status_filter = request.args.get('status', '')
+    
+    # Base query
+    query = ServiceRequest.query
+    
+    # Apply search
+    if search_query:
+        query = query.filter(
+            (ServiceRequest.token_number.ilike(f'%{search_query}%'))
+        )
+    
+    # Apply service filter
+    if service_filter:
+        query = query.filter(ServiceRequest.request_type == service_filter)
+    
+    # Apply status filter
+    if status_filter:
+        query = query.filter(ServiceRequest.status == status_filter)
+    
+    # Get all requests ordered by newest first
+    requests = query.order_by(ServiceRequest.submitted_at.desc()).all()
+    
+    return render_template('worker_requests.html',
+                         requests=requests,
+                         search_query=search_query,
+                         service_filter=service_filter,
+                         status_filter=status_filter)
+
+@app.route('/worker/request/<int:request_id>')
+@login_required
+def worker_request_details(request_id):
+    """Worker view of request details with update capability"""
+    if session.get('user_type') != 'worker':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    
+    from models import init_models
+    Student, _, ServiceRequest = init_models(db)
+    
+    service_request = ServiceRequest.query.get_or_404(request_id)
+    student = Student.query.get(service_request.student_id)
+    
+    # Service type mapping
+    service_names = {
+        'bonafide': 'Bonafide Certificate',
+        'transfer': 'Transfer Certificate',
+        'railway': 'Railway Concession',
+        'scholarship': 'Scholarship Application',
+        'exam': 'Exam Form',
+        'fee': 'Fee Receipt Request',
+        'library': 'Library Card',
+        'id_card': 'Digital ID Card'
+    }
+    
+    service_icons = {
+        'bonafide': 'fas fa-certificate',
+        'transfer': 'fas fa-exchange-alt',
+        'railway': 'fas fa-train',
+        'scholarship': 'fas fa-graduation-cap',
+        'exam': 'fas fa-edit',
+        'fee': 'fas fa-file-invoice-dollar',
+        'library': 'fas fa-book',
+        'id_card': 'fas fa-id-card'
+    }
+    
+    return render_template('worker_request_details.html',
+                         request=service_request,
+                         student=student,
+                         service_name=service_names.get(service_request.request_type, service_request.request_type),
+                         service_icon=service_icons.get(service_request.request_type, 'fas fa-file'))
+
+@app.route('/worker/update-status/<int:request_id>', methods=['POST'])
+@login_required
+def update_request_status(request_id):
+    """Update request status and add remarks"""
+    if session.get('user_type') != 'worker':
+        flash('Access denied!', 'error')
+        return redirect(url_for('index'))
+    
+    from models import init_models
+    _, _, ServiceRequest = init_models(db)
+    
+    try:
+        service_request = ServiceRequest.query.get_or_404(request_id)
+        
+        # Get form data
+        new_status = request.form.get('status')
+        worker_remarks = request.form.get('remarks', '').strip()
+        
+        # Update status
+        if new_status:
+            service_request.status = new_status
+            
+            # Update collected_at if status is Collected
+            if new_status == 'Collected':
+                service_request.collected_at = datetime.utcnow()
+        
+        # Update remarks
+        if worker_remarks:
+            service_request.remarks = worker_remarks
+        
+        db.session.commit()
+        
+        flash('Request updated successfully!', 'success')
+        return redirect(url_for('worker_request_details', request_id=request_id))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating request: {str(e)}', 'error')
+        return redirect(url_for('worker_request_details', request_id=request_id))
 
 # Will add more routes in subsequent phases
 

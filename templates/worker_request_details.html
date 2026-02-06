@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Details - Worker Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .worker-details-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .details-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .token-number {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .service-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            margin-right: 1rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .status-submitted {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .status-in-progress {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .status-ready {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-collected {
+            background: #6b7280;
+            color: white;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .details-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .info-value {
+            color: #1f2937;
+            text-align: right;
+        }
+
+        .update-form-card {
+            background: #f9fafb;
+            border: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .document-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .document-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .document-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .document-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 968px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Worker Navigation -->
+    <nav
+        style="background: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">
+                <i class="fas fa-graduation-cap"></i> StudentHub Worker
+            </h2>
+            <a href="{{ url_for('worker_dashboard') }}"
+                style="color: #1f2937; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ url_for('worker_requests') }}" style="color: #1f2937; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-list"></i> All Requests
+            </a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="{{ url_for('worker_profile') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="{{ url_for('logout') }}" style="color: #ef4444; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="worker-details-container">
+        <a href="{{ url_for('worker_requests') }}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Back to All Requests
+        </a>
+
+        <!-- Header -->
+        <div class="details-header">
+            <div class="token-number">
+                <i class="fas fa-ticket-alt"></i>
+                {{ request.token_number }}
+            </div>
+            <div style="margin-top: 1rem;">
+                <span class="service-badge">
+                    <i class="{{ service_icon }}"></i>
+                    {{ service_name }}
+                </span>
+                <span class="status-badge status-{{ request.status.lower().replace(' ', '-') }}">
+                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                    {{ request.status }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Request Information -->
+                <div class="details-card" style="margin-bottom: 2rem;">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i>
+                        Request Information
+                    </h3>
+                    <div class="info-row">
+                        <span class="info-label">Token Number</span>
+                        <span class="info-value">{{ request.token_number }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Service Type</span>
+                        <span class="info-value">{{ service_name }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">{{ request.status }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Submitted On</span>
+                        <span class="info-value">{{ request.submitted_at|datetime }}</span>
+                    </div>
+                    {% if request.collected_at %}
+                    <div class="info-row">
+                        <span class="info-label">Collected On</span>
+                        <span class="info-value">{{ request.collected_at|datetime }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Student Information -->
+                <div class="details-card" style="margin-bottom: 2rem;">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-graduate"></i>
+                        Student Information
+                    </h3>
+                    <div class="info-row">
+                        <span class="info-label">Name</span>
+                        <span class="info-value">{{ student.full_name }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Roll Number</span>
+                        <span class="info-value">{{ student.roll_number }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ student.email }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Class</span>
+                        <span class="info-value">{{ student.year }} - {{ student.division }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Department</span>
+                        <span class="info-value">{{ student.department }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">{{ student.phone_number }}</span>
+                    </div>
+                </div>
+
+                <!-- Service-Specific Details -->
+                {% if request.request_type == 'railway' %}
+                <div class="details-card" style="margin-bottom: 2rem;">
+                    <h3 class="card-title">
+                        <i class="fas fa-train"></i>
+                        Journey Details
+                    </h3>
+                    <div class="info-row">
+                        <span class="info-label">From Station</span>
+                        <span class="info-value">{{ request.from_station }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">To Station</span>
+                        <span class="info-value">{{ request.to_station }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Class</span>
+                        <span class="info-value">{{ request.journey_class }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Duration</span>
+                        <span class="info-value">{{ request.duration }}</span>
+                    </div>
+                    {% if request.address %}
+                    <div class="info-row">
+                        <span class="info-label">Address</span>
+                        <span class="info-value">{{ request.address }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% elif request.purpose %}
+                <div class="details-card" style="margin-bottom: 2rem;">
+                    <h3 class="card-title">
+                        <i class="fas fa-clipboard"></i>
+                        Additional Details
+                    </h3>
+                    <div class="info-row">
+                        <span class="info-label">Purpose</span>
+                        <span class="info-value">{{ request.purpose }}</span>
+                    </div>
+                    {% if request.address %}
+                    <div class="info-row">
+                        <span class="info-label">Address</span>
+                        <span class="info-value">{{ request.address }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Uploaded Documents -->
+                <div class="details-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-folder-open"></i>
+                        Uploaded Documents
+                    </h3>
+                    <div class="documents-grid">
+                        {% if request.id_proof_path %}
+                        <div class="document-card">
+                            <i class="fas fa-id-card document-icon"></i>
+                            <div class="document-name">ID Proof</div>
+                            <a href="{{ url_for('static', filename='../uploads/' + request.id_proof_path) }}"
+                                class="download-btn" download>
+                                <i class="fas fa-download"></i>
+                                Download
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if request.photo_path %}
+                        <div class="document-card">
+                            <i class="fas fa-image document-icon"></i>
+                            <div class="document-name">Photo</div>
+                            <a href="{{ url_for('static', filename='../uploads/' + request.photo_path) }}"
+                                class="download-btn" download>
+                                <i class="fas fa-download"></i>
+                                Download
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if request.fee_receipt_path %}
+                        <div class="document-card">
+                            <i class="fas fa-file-invoice-dollar document-icon"></i>
+                            <div class="document-name">Fee Receipt</div>
+                            <a href="{{ url_for('static', filename='../uploads/' + request.fee_receipt_path) }}"
+                                class="download-btn" download>
+                                <i class="fas fa-download"></i>
+                                Download
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if request.additional_doc_path %}
+                        <div class="document-card">
+                            <i class="fas fa-file-alt document-icon"></i>
+                            <div class="document-name">Additional Document</div>
+                            <a href="{{ url_for('static', filename='../uploads/' + request.additional_doc_path) }}"
+                                class="download-btn" download>
+                                <i class="fas fa-download"></i>
+                                Download
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Update Form -->
+            <div>
+                <div class="details-card update-form-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-edit"></i>
+                        Update Request
+                    </h3>
+
+                    <form method="POST" action="{{ url_for('update_request_status', request_id=request.id) }}">
+                        <div class="form-group">
+                            <label class="form-label">Update Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="Submitted" {% if request.status=='Submitted' %}selected{% endif %}>
+                                    Submitted</option>
+                                <option value="In Progress" {% if request.status=='In Progress' %}selected{% endif %}>In
+                                    Progress</option>
+                                <option value="Ready" {% if request.status=='Ready' %}selected{% endif %}>Ready for
+                                    Collection</option>
+                                <option value="Collected" {% if request.status=='Collected' %}selected{% endif %}>
+                                    Collected</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Worker Remarks</label>
+                            <textarea name="remarks" class="form-textarea"
+                                placeholder="Add any remarks or notes for this request...">{{ request.remarks if request.remarks else '' }}</textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Update Request
+                        </button>
+                    </form>
+                </div>
+
+                {% if request.remarks %}
+                <div class="details-card" style="margin-top: 2rem; background: #fffbeb; border: 2px solid #fbbf24;">
+                    <h3 class="card-title">
+                        <i class="fas fa-comment-dots"></i>
+                        Current Remarks
+                    </h3>
+                    <p style="color: #92400e; line-height: 1.6; white-space: pre-wrap;">{{ request.remarks }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

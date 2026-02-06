@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Requests - StudentHub Worker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .requests-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+
+        .form-input,
+        .form-select {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .clear-btn {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .requests-table-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .requests-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .requests-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .requests-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .requests-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .token-link {
+            color: #667eea;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .token-link:hover {
+            text-decoration: underline;
+        }
+
+        .service-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-submitted {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-ready {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-collected {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .no-requests {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .no-requests i {
+            font-size: 4rem;
+            color: #e5e7eb;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 968px) {
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+
+            .requests-table {
+                font-size: 0.85rem;
+            }
+
+            .requests-table th,
+            .requests-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Worker Navigation -->
+    <nav
+        style="background: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">
+                <i class="fas fa-graduation-cap"></i> StudentHub Worker
+            </h2>
+            <a href="{{ url_for('worker_dashboard') }}"
+                style="color: #1f2937; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ url_for('worker_requests') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-list"></i> All Requests
+            </a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="{{ url_for('worker_profile') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="{{ url_for('logout') }}" style="color: #ef4444; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="requests-container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-clipboard-list"></i> All Service Requests</h1>
+            <a href="{{ url_for('worker_dashboard') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Search & Filter Card -->
+        <div class="filter-card">
+            <form method="GET" action="{{ url_for('worker_requests') }}" class="filter-form">
+                <div class="form-group">
+                    <label class="form-label">Search</label>
+                    <input type="text" name="search" class="form-input" placeholder="Search by token number..."
+                        value="{{ search_query }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Service Type</label>
+                    <select name="service" class="form-select">
+                        <option value="">All Services</option>
+                        <option value="bonafide" {% if service_filter=='bonafide' %}selected{% endif %}>Bonafide
+                        </option>
+                        <option value="transfer" {% if service_filter=='transfer' %}selected{% endif %}>Transfer
+                        </option>
+                        <option value="railway" {% if service_filter=='railway' %}selected{% endif %}>Railway</option>
+                        <option value="scholarship" {% if service_filter=='scholarship' %}selected{% endif %}>
+                            Scholarship
+                        </option>
+                        <option value="exam" {% if service_filter=='exam' %}selected{% endif %}>Exam</option>
+                        <option value="library" {% if service_filter=='library' %}selected{% endif %}>Library</option>
+                        <option value="id_card" {% if service_filter=='id_card' %}selected{% endif %}>ID Card</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="Submitted" {% if status_filter=='Submitted' %}selected{% endif %}>Submitted
+                        </option>
+                        <option value="In Progress" {% if status_filter=='In Progress' %}selected{% endif %}>In Progress
+                        </option>
+                        <option value="Ready" {% if status_filter=='Ready' %}selected{% endif %}>Ready</option>
+                        <option value="Collected" {% if status_filter=='Collected' %}selected{% endif %}>Collected
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="filter-btn">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                    <a href="{{ url_for('worker_requests') }}" class="clear-btn">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Requests Table -->
+        <div class="requests-table-card">
+            {% if requests %}
+            <table class="requests-table">
+                <thead>
+                    <tr>
+                        <th>Token Number</th>
+                        <th>Service Type</th>
+                        <th>Status</th>
+                        <th>Submitted Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('worker_request_details', request_id=req.id) }}" class="token-link">
+                                {{ req.token_number }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="service-badge">
+                                <i class="fas fa-tag"></i>
+                                {{ req.request_type|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ req.status.lower().replace(' ', '-') }}">
+                                {{ req.status }}
+                            </span>
+                        </td>
+                        <td>{{ req.submitted_at|datetime }}</td>
+                        <td>
+                            <a href="{{ url_for('worker_request_details', request_id=req.id) }}" class="action-btn">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-requests">
+                <i class="fas fa-inbox"></i>
+                <h3>No Requests Found</h3>
+                <p>Try adjusting your search or filter criteria</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

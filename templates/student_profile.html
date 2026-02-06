@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - StudentHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .profile-container {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3rem;
+            color: #667eea;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-roll {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-input:disabled {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'partials/sidebar.html' %}
+
+    <div class="main-content">
+        {% include 'partials/topbar.html' %}
+
+        <div class="profile-container">
+            <a href="{{ url_for('student_dashboard') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="profile-name">{{ current_user.full_name }}</div>
+                <div class="profile-roll">{{ current_user.roll_number }}</div>
+            </div>
+
+            <!-- Edit Profile Card -->
+            <div class="profile-card">
+                <h2 class="card-title">
+                    <i class="fas fa-user-edit"></i>
+                    Edit Profile
+                </h2>
+
+                <form method="POST" action="{{ url_for('update_profile') }}">
+                    <div class="info-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-input" value="{{ current_user.full_name }}"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Roll Number</label>
+                            <input type="text" class="form-input" value="{{ current_user.roll_number }}" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" value="{{ current_user.email }}" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" name="phone_number" class="form-input"
+                                value="{{ current_user.phone_number }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-input" value="{{ current_user.department }}" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Year & Division</label>
+                            <input type="text" class="form-input"
+                                value="{{ current_user.year }} - {{ current_user.division }}" disabled>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Update Profile
+                    </button>
+                </form>
+            </div>
+
+            <!-- Change Password Card (Initially Hidden) -->
+            <div class="profile-card" id="passwordCard" style="display: none;">
+                <h2 class="card-title">
+                    <i class="fas fa-lock"></i>
+                    Change Password
+                </h2>
+
+                <form method="POST" action="{{ url_for('change_password') }}">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" name="old_password" class="form-input"
+                            placeholder="Enter current password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="new_password" class="form-input"
+                            placeholder="Enter new password (min 6 characters)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" name="confirm_password" class="form-input"
+                            placeholder="Re-enter new password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-key"></i>
+                        Change Password
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="togglePasswordForm()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+
+            <!-- Toggle Button -->
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-secondary" id="toggleBtn" onclick="togglePasswordForm()">
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        function togglePasswordForm() {
+            const passwordCard = document.getElementById('passwordCard');
+            const toggleBtn = document.getElementById('toggleBtn');
+
+            if (passwordCard.style.display === 'none') {
+                passwordCard.style.display = 'block';
+                toggleBtn.style.display = 'none';
+            } else {
+                passwordCard.style.display = 'none';
+                toggleBtn.style.display = 'inline-flex';
+            }
+        }
+    </script>
+</body>
+
+</html>
