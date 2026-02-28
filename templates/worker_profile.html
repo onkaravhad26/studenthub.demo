@@ -317,6 +317,75 @@
             }
         }
     </script>
+
+    <style>
+        @media (max-width: 768px) {
+            nav[style] {
+                flex-wrap: wrap;
+                padding: 0.75rem 1rem !important;
+                gap: 0.5rem !important;
+            }
+
+            nav[style] h2 {
+                font-size: 1.1rem !important;
+            }
+
+            nav[style] div:first-child {
+                gap: 1rem !important;
+                flex-wrap: wrap;
+            }
+
+            .profile-container {
+                padding: 1rem;
+            }
+
+            .profile-name {
+                font-size: 1.5rem;
+            }
+
+            .profile-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+            }
+
+            .form-input {
+                font-size: 16px;
+                min-height: 44px;
+            }
+
+            .btn {
+                min-height: 48px;
+            }
+
+            .btn-secondary {
+                margin-left: 0;
+                margin-top: 0.75rem;
+            }
+
+            .back-button {
+                padding: 0.6rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-name {
+                font-size: 1.3rem;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+            }
+
+            .profile-container {
+                padding: 0.75rem;
+            }
+        }
+    </style>
 </body>
 
 </html>

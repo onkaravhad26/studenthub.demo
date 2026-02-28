@@ -371,7 +371,7 @@
 
 @media (max-width: 768px) {
     .auth-section {
-        padding: 100px 15px 60px;
+        padding: 95px 15px 50px;
     }
 
     .role-selection,
@@ -390,12 +390,80 @@
     }
 
     .auth-logo {
-        height: 80px;
+        height: 70px;
     }
 
     .flash-messages {
-        left: 15px;
-        right: 15px;
+        left: 10px;
+        right: 10px;
         max-width: none;
+    }
+
+    .role-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .tab-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 16px;
+        /* Prevents iOS zoom on input focus */
+        min-height: 48px;
+        padding: 12px 14px;
+    }
+
+    .btn-full {
+        min-height: 52px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-section {
+        padding: 85px 12px 40px;
+    }
+
+    .role-selection,
+    .auth-form-container {
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
+    }
+
+    .auth-logo {
+        height: 60px;
+    }
+
+    .auth-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .role-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 2rem;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 380px) {
+    .auth-section {
+        padding: 80px 8px 30px;
+    }
+
+    .role-selection,
+    .auth-form-container {
+        padding: 1.2rem 0.8rem;
+    }
+
+    .auth-logo {
+        height: 50px;
     }
 }

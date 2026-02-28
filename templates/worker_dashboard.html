@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
         .worker-container {
             padding: 2rem;
             max-width: 1400px;
@@ -452,6 +460,62 @@
             </a>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .worker-container {
+                padding: 1rem;
+            }
+
+            .welcome-header {
+                padding: 1.5rem 1rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            [style*="padding: 1rem 2rem"] {
+                padding: 0.75rem 1rem !important;
+                flex-wrap: wrap;
+                gap: 0.5rem !important;
+            }
+
+            [style*="font-size: 1.5rem"] {
+                font-size: 1.1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+        }
+    </style>
 </body>
 
 </html>
