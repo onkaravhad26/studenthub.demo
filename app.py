@@ -19,7 +19,7 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth'  # Redirect to /auth when login required
 login_manager.login_message = 'Please log in to access this page.'
 
 # Initialize database and create tables (for production deployment)
@@ -263,8 +263,8 @@ def logout():
 def student_dashboard():
     """Student dashboard - Main page with service cards"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     return render_template('student_dashboard.html')
 
@@ -273,8 +273,8 @@ def student_dashboard():
 def my_requests():
     """View all student requests"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     from models import init_models
     Student, _, ServiceRequest = init_models(db)
@@ -302,8 +302,8 @@ def my_requests():
 def academic_calendar():
     """Academic calendar page"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     return render_template('academic_calendar.html')
 
@@ -312,8 +312,8 @@ def academic_calendar():
 def faculty_details():
     """Faculty details page"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     return render_template('faculty_details.html')
 
@@ -322,8 +322,8 @@ def faculty_details():
 def apply_service(service_type):
     """Display application form for specific service"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     service_config = {
         'bonafide': {
@@ -726,8 +726,8 @@ def worker_dashboard():
 def worker_requests():
     """View all service requests with search and filter"""
     if session.get('user_type') != 'worker':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a worker.', 'error')
+        return redirect(url_for('auth') + '?role=worker')
     
     from models import init_models
     _, _, ServiceRequest = init_models(db)
@@ -768,8 +768,8 @@ def worker_requests():
 def worker_request_details(request_id):
     """Worker view of request details with update capability"""
     if session.get('user_type') != 'worker':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a worker.', 'error')
+        return redirect(url_for('auth') + '?role=worker')
     
     from models import init_models
     Student, _, ServiceRequest = init_models(db)
@@ -811,8 +811,8 @@ def worker_request_details(request_id):
 def update_request_status(request_id):
     """Update request status and add remarks"""
     if session.get('user_type') != 'worker':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a worker.', 'error')
+        return redirect(url_for('auth') + '?role=worker')
     
     from models import init_models
     _, _, ServiceRequest = init_models(db)
