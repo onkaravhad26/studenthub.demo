@@ -19,10 +19,13 @@ class Config:
     SQLALCHEMY_ECHO = False  # Set to True for SQL query debugging
     
     # Session Configuration
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
-    SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+    PERMANENT_SESSION_LIFETIME = timedelta(days=7)  # Stay logged in for 7 days
+    SESSION_COOKIE_SECURE = False  # Railway uses HTTPS but set via env var
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
+    REMEMBER_COOKIE_DURATION = timedelta(days=7)  # remember=True lasts 7 days
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SECURE = False
     
     # File Upload Configuration
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')

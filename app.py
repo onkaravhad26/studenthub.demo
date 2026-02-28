@@ -147,7 +147,8 @@ def student_login():
         ).first()
         
         if student and student.check_password(password):
-            login_user(student)
+            session.permanent = True  # Keep session alive across refreshes
+            login_user(student, remember=True)
             session['user_type'] = 'student'
             flash('Login successful!', 'success')
             return redirect(url_for('student_dashboard'))
@@ -233,7 +234,8 @@ def worker_login():
         ).first()
         
         if worker and worker.check_password(password) and worker.is_active:
-            login_user(worker)
+            session.permanent = True  # Keep session alive across refreshes
+            login_user(worker, remember=True)
             session['user_type'] = 'worker'
             flash('Login successful!', 'success')
             return redirect(url_for('worker_dashboard'))
