@@ -255,30 +255,140 @@
 
 <body>
     <!-- Worker Navigation -->
-    <nav
-        style="background: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 2rem;">
-            <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudentHub"
-                    style="height: 30px; width: auto; vertical-align: middle; margin-right: 8px;"> StudentHub Worker
-            </h2>
-            <a href="{{ url_for('worker_dashboard') }}"
-                style="color: #1f2937; text-decoration: none; font-weight: 600;">
+    <nav class="worker-nav" id="workerNav">
+        <div class="worker-nav-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudentHub" class="worker-nav-logo">
+            <span>StudentHub Worker</span>
+        </div>
+        <button class="worker-nav-toggle" id="workerNavToggle" onclick="toggleWorkerNav()">
+            <i class="fas fa-bars" id="workerNavIcon"></i>
+        </button>
+        <div class="worker-nav-links" id="workerNavLinks">
+            <a href="{{ url_for('worker_dashboard') }}" class="worker-nav-link">
                 <i class="fas fa-home"></i> Dashboard
             </a>
-            <a href="{{ url_for('worker_requests') }}" style="color: #1f2937; text-decoration: none; font-weight: 600;">
+            <a href="{{ url_for('worker_requests') }}" class="worker-nav-link active">
                 <i class="fas fa-list"></i> All Requests
             </a>
-        </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <a href="{{ url_for('worker_profile') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+            <a href="{{ url_for('worker_profile') }}" class="worker-nav-link">
                 <i class="fas fa-user-circle"></i> Profile
             </a>
-            <a href="{{ url_for('logout') }}" style="color: #ef4444; text-decoration: none; font-weight: 600;">
+            <a href="{{ url_for('logout') }}" class="worker-nav-link logout">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </div>
     </nav>
+    <style>
+        .worker-nav {
+            background: white;
+            padding: 0 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .worker-nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .worker-nav-logo {
+            height: 32px;
+            width: auto;
+        }
+
+        .worker-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: #667eea;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .worker-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .worker-nav-link {
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .worker-nav-link:hover,
+        .worker-nav-link.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .worker-nav-link.logout {
+            color: #ef4444;
+        }
+
+        @media (max-width: 640px) {
+            .worker-nav-toggle {
+                display: block;
+            }
+
+            .worker-nav-brand span {
+                font-size: 1rem;
+            }
+
+            .worker-nav-links {
+                display: none;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 0.5rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                gap: 0.25rem;
+                z-index: 999;
+            }
+
+            .worker-nav-links.open {
+                display: flex;
+            }
+
+            .worker-nav-link {
+                width: 100%;
+                padding: 12px 16px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <script>
+        function toggleWorkerNav() {
+            var l = document.getElementById('workerNavLinks'), i = document.getElementById('workerNavIcon');
+            l.classList.toggle('open');
+            i.className = l.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
+        }
+    </script>
 
     <div class="worker-details-container">
         <a href="{{ url_for('worker_requests') }}" class="back-button">
