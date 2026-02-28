@@ -49,23 +49,45 @@ def load_user(user_id):
     """Load user based on user type stored in session"""
     from models import init_models
     Student, Worker, _ = init_models(db)
-    user_type = session.get('user_type')
-    if user_type == 'student':
-        return Student.query.get(int(user_id))
-    elif user_type == 'worker':
-        return Worker.query.get(int(user_id))
+    try:
+        user_type = session.get('user_type')
+        if user_type == 'student':
+            return Student.query.get(int(user_id))
+        elif user_type == 'worker':
+            return Worker.query.get(int(user_id))
+        # Fallback: try student first, then worker
+        user = Student.query.get(int(user_id))
+        if user:
+            session['user_type'] = 'student'
+            return user
+        user = Worker.query.get(int(user_id))
+        if user:
+            session['user_type'] = 'worker'
+            return user
+    except Exception:
+        pass
     return None
 
 # ==================== ROUTES ====================
 
 @app.route('/')
 def index():
-    """Landing page"""
+    """Landing page - redirect logged in users to their dashboard"""
+    if current_user.is_authenticated:
+        if session.get('user_type') == 'student':
+            return redirect(url_for('student_dashboard'))
+        elif session.get('user_type') == 'worker':
+            return redirect(url_for('worker_dashboard'))
     return render_template('index.html')
 
 @app.route('/auth')
 def auth():
-    """Login/Signup page"""
+    """Login/Signup page - redirect logged in users to their dashboard"""
+    if current_user.is_authenticated:
+        if session.get('user_type') == 'student':
+            return redirect(url_for('student_dashboard'))
+        elif session.get('user_type') == 'worker':
+            return redirect(url_for('worker_dashboard'))
     return render_template('auth.html')
 
 # ==================== AUTHENTICATION ROUTES ====================
@@ -475,8 +497,8 @@ def submit_application(service_type):
 def fee_receipts():
     """Fee receipts page"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     return render_template('fee_receipts.html')
 
 @app.route('/student/request/<int:request_id>')
@@ -484,8 +506,8 @@ def fee_receipts():
 def request_details(request_id):
     """View complete request details"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     from models import init_models
     _, _, ServiceRequest = init_models(db)
@@ -540,8 +562,8 @@ def request_details(request_id):
 def student_profile():
     """Student profile page"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     return render_template('student_profile.html')
 
 @app.route('/student/profile/update', methods=['POST'])
@@ -549,8 +571,8 @@ def student_profile():
 def update_profile():
     """Update student profile"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     try:
         # Get form data
@@ -576,8 +598,8 @@ def update_profile():
 def change_password():
     """Change student password"""
     if session.get('user_type') != 'student':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a student.', 'error')
+        return redirect(url_for('auth') + '?role=student')
     
     try:
         old_password = request.form.get('old_password')
@@ -616,8 +638,8 @@ def change_password():
 def worker_profile():
     """Worker profile page"""
     if session.get('user_type') != 'worker':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a worker.', 'error')
+        return redirect(url_for('auth') + '?role=worker')
     return render_template('worker_profile.html')
 
 @app.route('/worker/profile/update', methods=['POST'])
@@ -625,8 +647,8 @@ def worker_profile():
 def update_worker_profile():
     """Update worker profile"""
     if session.get('user_type') != 'worker':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a worker.', 'error')
+        return redirect(url_for('auth') + '?role=worker')
     
     try:
         # Get form data
@@ -650,8 +672,8 @@ def update_worker_profile():
 def worker_change_password():
     """Change worker password"""
     if session.get('user_type') != 'worker':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a worker.', 'error')
+        return redirect(url_for('auth') + '?role=worker')
     
     try:
         old_password = request.form.get('old_password')
@@ -690,8 +712,8 @@ def worker_change_password():
 def worker_dashboard():
     """Worker dashboard with statistics and recent requests"""
     if session.get('user_type') != 'worker':
-        flash('Access denied!', 'error')
-        return redirect(url_for('index'))
+        flash('Please log in as a worker.', 'error')
+        return redirect(url_for('auth') + '?role=worker')
     
     from models import init_models
     _, _, ServiceRequest = init_models(db)
