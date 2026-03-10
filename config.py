@@ -5,6 +5,9 @@ Configuration Settings for StudentHub
 import os
 from datetime import timedelta
 
+# Determine environment
+_IS_PRODUCTION = os.environ.get('FLASK_ENV', 'development').lower() == 'production'
+
 class Config:
     """Base configuration"""
 
@@ -24,12 +27,12 @@ class Config:
 
     # Session Configuration - keep users logged in for 7 days
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
-    SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = _IS_PRODUCTION   # True in production (HTTPS only)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     REMEMBER_COOKIE_DURATION = timedelta(days=7)
     REMEMBER_COOKIE_HTTPONLY = True
-    REMEMBER_COOKIE_SECURE = False
+    REMEMBER_COOKIE_SECURE = _IS_PRODUCTION    # True in production (HTTPS only)
 
     # File Upload Configuration
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')

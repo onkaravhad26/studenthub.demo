@@ -9,6 +9,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import datetime
 import os
+import logging
 from config import Config
 
 # Initialize Flask app
@@ -30,6 +31,7 @@ with app.app_context():
     
     # Create default worker if not exists
     if not Worker.query.filter_by(employee_id='ADMIN001').first():
+        admin_default_password = os.environ.get('ADMIN_DEFAULT_PASSWORD', 'admin123')
         admin_worker = Worker(
             employee_id='ADMIN001',
             email='admin@college.edu',
@@ -38,7 +40,7 @@ with app.app_context():
             role='admin',
             is_active=True
         )
-        admin_worker.set_password('admin123')
+        admin_worker.set_password(admin_default_password)
         db.session.add(admin_worker)
         db.session.commit()
 
@@ -52,15 +54,15 @@ def load_user(user_id):
     try:
         user_type = session.get('user_type')
         if user_type == 'student':
-            return Student.query.get(int(user_id))
+            return db.session.get(Student, int(user_id))
         elif user_type == 'worker':
-            return Worker.query.get(int(user_id))
+            return db.session.get(Worker, int(user_id))
         # Fallback: try student first, then worker
-        user = Student.query.get(int(user_id))
+        user = db.session.get(Student, int(user_id))
         if user:
             session['user_type'] = 'student'
             return user
-        user = Worker.query.get(int(user_id))
+        user = db.session.get(Worker, int(user_id))
         if user:
             session['user_type'] = 'worker'
             return user
@@ -149,7 +151,8 @@ def student_register():
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Registration failed: {str(e)}', 'error')
+        app.logger.error(f'Student registration error: {e}')
+        flash('Registration failed. Please try again.', 'error')
         return redirect(url_for('auth') + '?role=student')
 
 @app.route('/student/login', methods=['POST'])
@@ -179,7 +182,8 @@ def student_login():
             return redirect(url_for('auth') + '?role=student')
             
     except Exception as e:
-        flash(f'Login failed: {str(e)}', 'error')
+        app.logger.error(f'Student login error: {e}')
+        flash('Login failed. Please try again.', 'error')
         return redirect(url_for('auth') + '?role=student')
 
 @app.route('/worker/register', methods=['POST'])
@@ -236,7 +240,8 @@ def worker_register():
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Registration failed: {str(e)}', 'error')
+        app.logger.error(f'Worker registration error: {e}')
+        flash('Registration failed. Please try again.', 'error')
         return redirect(url_for('auth') + '?role=worker')
 
 @app.route('/worker/login', methods=['POST'])
@@ -266,7 +271,8 @@ def worker_login():
             return redirect(url_for('auth') + '?role=worker')
             
     except Exception as e:
-        flash(f'Login failed: {str(e)}', 'error')
+        app.logger.error(f'Worker login error: {e}')
+        flash('Login failed. Please try again.', 'error')
         return redirect(url_for('auth') + '?role=worker')
 
 @app.route('/logout')
@@ -416,8 +422,18 @@ def submit_application(service_type):
         upload_folder = os.path.join(app.root_path, 'uploads')
         os.makedirs(upload_folder, exist_ok=True)
         
+        ALLOWED_EXTENSIONS = app.config.get('ALLOWED_EXTENSIONS', {'pdf', 'jpg', 'jpeg', 'png'})
+
+        def allowed_file(filename):
+            return '.' in filename and \
+                   filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
         def save_file(file_field):
             if file_field and file_field.filename:
+                if not allowed_file(file_field.filename):
+                    raise ValueError(
+                        f"Invalid file type. Only {', '.join(ALLOWED_EXTENSIONS).upper()} files are allowed."
+                    )
                 filename = secure_filename(file_field.filename)
                 # Add timestamp to filename to make it unique
                 import time
@@ -486,9 +502,14 @@ def submit_application(service_type):
         flash(f'Application submitted successfully! Your token number is: {token}', 'success')
         return redirect(url_for('my_requests'))
         
+    except ValueError as e:
+        db.session.rollback()
+        # ValueError is raised for invalid file types — show user-friendly message
+        flash(str(e), 'error')
+        return redirect(url_for('apply_service', service_type=service_type))
     except Exception as e:
         db.session.rollback()
-        print(f"Error submitting application: {e}")
+        app.logger.error(f'Error submitting application: {e}')
         flash('An error occurred while submitting your application. Please try again.', 'error')
         return redirect(url_for('apply_service', service_type=service_type))
 
@@ -512,7 +533,10 @@ def request_details(request_id):
     from models import init_models
     _, _, ServiceRequest = init_models(db)
     
-    service_request = ServiceRequest.query.get_or_404(request_id)
+    service_request = db.session.get(ServiceRequest, request_id)
+    if service_request is None:
+        from flask import abort
+        abort(404)
     
     # Ensure student can only view their own requests
     if service_request.student_id != current_user.id:
@@ -590,7 +614,8 @@ def update_profile():
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error updating profile: {str(e)}', 'error')
+        app.logger.error(f'Error updating student profile: {e}')
+        flash('Error updating profile. Please try again.', 'error')
         return redirect(url_for('student_profile'))
 
 @app.route('/student/change-password', methods=['POST'])
@@ -629,7 +654,8 @@ def change_password():
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error changing password: {str(e)}', 'error')
+        app.logger.error(f'Error changing student password: {e}')
+        flash('Error changing password. Please try again.', 'error')
         return redirect(url_for('student_profile'))
 
 # Worker Profile Routes
@@ -664,7 +690,8 @@ def update_worker_profile():
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error updating profile: {str(e)}', 'error')
+        app.logger.error(f'Error updating worker profile: {e}')
+        flash('Error updating profile. Please try again.', 'error')
         return redirect(url_for('worker_profile'))
 
 @app.route('/worker/change-password', methods=['POST'])
@@ -703,7 +730,8 @@ def worker_change_password():
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error changing password: {str(e)}', 'error')
+        app.logger.error(f'Error changing worker password: {e}')
+        flash('Error changing password. Please try again.', 'error')
         return redirect(url_for('worker_profile'))
 
 
@@ -796,8 +824,12 @@ def worker_request_details(request_id):
     from models import init_models
     Student, _, ServiceRequest = init_models(db)
     
-    service_request = ServiceRequest.query.get_or_404(request_id)
-    student = Student.query.get(service_request.student_id)
+    service_request = db.session.get(ServiceRequest, request_id)
+    if service_request is None:
+        from flask import abort
+        abort(404)
+
+    student = db.session.get(Student, service_request.student_id)
     
     # Service type mapping
     service_names = {
@@ -840,7 +872,10 @@ def update_request_status(request_id):
     _, _, ServiceRequest = init_models(db)
     
     try:
-        service_request = ServiceRequest.query.get_or_404(request_id)
+        service_request = db.session.get(ServiceRequest, request_id)
+        if service_request is None:
+            from flask import abort
+            abort(404)
         
         # Get form data
         new_status = request.form.get('status')
@@ -865,7 +900,8 @@ def update_request_status(request_id):
         
     except Exception as e:
         db.session.rollback()
-        flash(f'Error updating request: {str(e)}', 'error')
+        app.logger.error(f'Error updating request {request_id}: {e}')
+        flash('Error updating request. Please try again.', 'error')
         return redirect(url_for('worker_request_details', request_id=request_id))
 
 # Will add more routes in subsequent phases
@@ -911,6 +947,7 @@ if __name__ == '__main__':
         
         # Create default worker if not exists
         if not Worker.query.filter_by(employee_id='ADMIN001').first():
+            admin_default_password = os.environ.get('ADMIN_DEFAULT_PASSWORD', 'admin123')
             admin_worker = Worker(
                 employee_id='ADMIN001',
                 email='admin@college.edu',
@@ -919,12 +956,10 @@ if __name__ == '__main__':
                 role='admin',
                 is_active=True
             )
-            admin_worker.set_password('admin123')
+            admin_worker.set_password(admin_default_password)
             db.session.add(admin_worker)
             db.session.commit()
-            print(">> Default worker created:")
-            print("   Employee ID: ADMIN001")
-            print("   Password: admin123")
+            print(">> Default admin worker created (Employee ID: ADMIN001)")
     
     # Run the application
     print(">> Starting Railway Concession Management System...")
